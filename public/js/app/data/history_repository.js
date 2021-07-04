@@ -39,7 +39,7 @@ function monthToText(month) {
 
 function getCurrentMonth() {
   var dateObject = new Date();
-  var currentMonth = dateObject.getMonth();
+  var currentMonth = dateObject.getMonth() + 1;
   return monthToText(currentMonth);
 }
 
