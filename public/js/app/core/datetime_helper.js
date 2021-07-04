@@ -7,6 +7,7 @@ Object.defineProperty(exports, "__esModule", {
 exports.getDateStandartFormat = getDateStandartFormat;
 exports.getTimeStandartFormat = getTimeStandartFormat;
 exports.monthToText = monthToText;
+exports.getCurrentMonth = getCurrentMonth;
 
 function getDateStandartFormat() {
   var dateObj = new Date();
@@ -34,6 +35,12 @@ function getTimeStandartFormat() {
 
 function monthToText(month) {
   return ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'][month - 1];
+}
+
+function getCurrentMonth() {
+  var dateObject = new Date();
+  var currentMonth = dateObject.getMonth();
+  return monthToText(currentMonth);
 }
 
 },{}]},{},[1]);

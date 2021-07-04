@@ -9,7 +9,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>Report</title>
+    <title>Setting</title>
 
     <!-- Custom fonts for this template -->
     <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
@@ -67,7 +67,7 @@
             <hr class="sidebar-divider">
 
             <!-- Nav Item - Report -->
-            <li class="nav-item active">
+            <li class="nav-item">
                 <a class="nav-link" href="report.html">
                     <i class="far fa-fw fa-copy"></i>
                     <span>Report</span>
@@ -100,7 +100,7 @@
             <hr class="sidebar-divider">
 
             <!-- Nav Item - Setting -->
-            <li class="nav-item">
+            <li class="nav-item active">
                 <a class="nav-link" href="setting.html">
                     <i class="fas fa-sliders-h"></i>
                     <span>setting</span>
@@ -132,19 +132,26 @@
                         <i class="fa fa-bars"></i>
                     </button>
 
-                    <!-- Report Button (Topbar) -->
-                    <a href="#" id="reportBtnTop" class="btn btn-link rounded text-white text-lg ml-auto" role="button">Report</a>
-
                 </nav>
                 <!-- End of Topbar -->
 
                 <!-- Begin Page Content -->
                 <div class="container-fluid">
 
-                    <!-- Report -->
-                    <div class="all-reports">
-                        <!-- template year with month -->
+                    <h3>Delete Activity</h3>
+                    <!-- activity selection -->
+                    <div class="activity-field">
+                        <select name="activity-list" id="activity-list" class="form-control bg-gray-200">
+                            <!-- template activity option -->
+                        </select>
                     </div>
+
+                    <!-- delete activity button -->
+                    <div class="mt-2">
+                        <button id="delete-btn" class="btn btn-primary ml-auto">Delete</button>    
+                    </div>
+
+                    
 
                 </div>
                 <!-- /.container-fluid -->
@@ -166,21 +173,12 @@
         <!-- End of Content Wrapper -->
 
     </div>
+
+    <script type="text/template" data-template="option-activity">
+        <option value="${id}" useTextfield=${useTextfield}>${title}</option>
+    </script>
+
     <!-- End of Page Wrapper -->
-
-    <!-- template -->
-    <script type="text/template" data-template="year-data">
-        <div class="yearly mb-5">
-            <h2 class="h3 mb-3 text-gray-800">${year}</h2>
-            <ul class="months list-unstyled text-center">
-                ${months_data_html}
-            </ul>
-        </div>
-    </script>
-
-    <script type="text/template" data-template="month-data">
-        <li><a href="report-list.html?year=${year_number}&month=${month_number}" class="d-block btn btn-primary">${month_text}</a></li>
-    </script>
 
     <!-- Scroll to Top Button-->
     <a class="scroll-to-top rounded" href="#page-top">
@@ -201,7 +199,7 @@
     <script src="js/main.js"></script>
 
     <!-- script for this page -->
-    <script src="public/js/app/pages/report.js"></script>
+    <script src="public/js/app/pages/setting.js"></script>
 
 </body>
 

@@ -11,6 +11,7 @@ Object.defineProperty(exports, "__esModule", {
 exports.getActivities = getActivities;
 exports.getActivitiesByMonthAndYear = getActivitiesByMonthAndYear;
 exports.addActivity = addActivity;
+exports.deleteActivity = deleteActivity;
 
 var _regenerator = _interopRequireDefault(require("@babel/runtime/regenerator"));
 
@@ -171,6 +172,51 @@ function _addActivity() {
   return _addActivity.apply(this, arguments);
 }
 
+function deleteActivity(_x3) {
+  return _deleteActivity.apply(this, arguments);
+}
+
+function _deleteActivity() {
+  _deleteActivity = (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee4(activityId) {
+    var result, response;
+    return _regenerator.default.wrap(function _callee4$(_context4) {
+      while (1) {
+        switch (_context4.prev = _context4.next) {
+          case 0:
+            //prepare variable to store response & result
+            result = null;
+            response = null; //call to api
+
+            _context4.prev = 2;
+            _context4.next = 5;
+            return api.requestApi("activity.delete", null, "/" + activityId);
+
+          case 5:
+            response = _context4.sent;
+            _context4.next = 12;
+            break;
+
+          case 8:
+            _context4.prev = 8;
+            _context4.t0 = _context4["catch"](2);
+            console.log("error !", _context4.t0);
+            response = false;
+
+          case 12:
+            //proccess response
+            result = api.processResponse(response);
+            return _context4.abrupt("return", result);
+
+          case 14:
+          case "end":
+            return _context4.stop();
+        }
+      }
+    }, _callee4, null, [[2, 8]]);
+  }));
+  return _deleteActivity.apply(this, arguments);
+}
+
 },{"./../infra/api":2,"@babel/runtime/helpers/asyncToGenerator":5,"@babel/runtime/helpers/interopRequireDefault":6,"@babel/runtime/helpers/typeof":10,"@babel/runtime/regenerator":13}],2:[function(require,module,exports){
 "use strict";
 
@@ -197,7 +243,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
 var message = {
   "connection": "Check your internet connection !"
 };
-var server = "https://activity-app-database.herokuapp.com";
+var server = "http://localhost:8000";
 var listApi = {
   "activity.get": {
     method: 'GET',
@@ -211,6 +257,11 @@ var listApi = {
   },
   "activity.add": {
     method: "POST",
+    url: server + "/api/activities",
+    withToken: false
+  },
+  "activity.delete": {
+    method: "DELETE",
     url: server + "/api/activities",
     withToken: false
   },
@@ -421,7 +472,7 @@ function _requestApi() {
               url: url + additionalUrl,
               data: dataRequest,
               type: method,
-              crossDomain: true,
+              crossDomain: false,
               dataType: 'json' // added data type
 
             });

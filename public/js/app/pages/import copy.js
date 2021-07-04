@@ -4,18 +4,71 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.showSnackBar = showSnackBar;
+exports.getDateStandartFormat = getDateStandartFormat;
+exports.getTimeStandartFormat = getTimeStandartFormat;
+exports.monthToText = monthToText;
+exports.getCurrentMonth = getCurrentMonth;
 
-function showSnackBar(text) {
-  var duration = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 3;
-  var snackbarEl = $($.parseHTML('<div class="show" id="snackbar">' + text + '</div>'));
-  $("body").append(snackbarEl);
-  setTimeout(function () {
-    snackbarEl.removeClass("show");
-  }, 3000);
+function getDateStandartFormat() {
+  var dateObj = new Date();
+  return dateObj.toISOString().split("T")[0];
+}
+
+function checkTime(i) {
+  if (i < 10) {
+    i = "0" + i;
+  }
+
+  return i;
+}
+
+function getTimeStandartFormat() {
+  var dateObj = new Date();
+  var h = dateObj.getHours();
+  var m = dateObj.getMinutes();
+  var s = dateObj.getSeconds(); // add a zero in front of numbers<10
+
+  m = checkTime(m);
+  s = checkTime(s);
+  return h + ":" + m + ":" + s;
+}
+
+function monthToText(month) {
+  return ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'][month - 1];
+}
+
+function getCurrentMonth() {
+  var dateObject = new Date();
+  var currentMonth = dateObject.getMonth();
+  return monthToText(currentMonth);
 }
 
 },{}],2:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.render = render;
+
+function render(html, item) {
+  var tokens = html.split(/\$\{(.+?)\}/g); //example tokens : 
+  //["<div>", "title", "</div><div>", "description", "</div>"]
+
+  var finalHtml = tokens.map(function (token, i) {
+    //token can be "<div>" (when i is odd) or "title" (when i is even)
+    if (i % 2 == 0) {
+      //if even, that means token is just a html
+      return token;
+    } else {
+      //if odd, that means token is a key of item. 
+      return item[token];
+    }
+  }).join('');
+  return finalHtml;
+}
+
+},{}],3:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -28,7 +81,6 @@ Object.defineProperty(exports, "__esModule", {
 exports.getActivities = getActivities;
 exports.getActivitiesByMonthAndYear = getActivitiesByMonthAndYear;
 exports.addActivity = addActivity;
-exports.deleteActivity = deleteActivity;
 
 var _regenerator = _interopRequireDefault(require("@babel/runtime/regenerator"));
 
@@ -189,12 +241,207 @@ function _addActivity() {
   return _addActivity.apply(this, arguments);
 }
 
-function deleteActivity(_x3) {
-  return _deleteActivity.apply(this, arguments);
+},{"./../infra/api":5,"@babel/runtime/helpers/asyncToGenerator":9,"@babel/runtime/helpers/interopRequireDefault":10,"@babel/runtime/helpers/typeof":14,"@babel/runtime/regenerator":17}],4:[function(require,module,exports){
+"use strict";
+
+var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
+
+var _typeof = require("@babel/runtime/helpers/typeof");
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.getHistories = getHistories;
+exports.addHistory = addHistory;
+exports.bulkStoreHistoriesData = bulkStoreHistoriesData;
+exports.deleteHistory = deleteHistory;
+exports.getHistoryRange = getHistoryRange;
+
+var _regenerator = _interopRequireDefault(require("@babel/runtime/regenerator"));
+
+var _asyncToGenerator2 = _interopRequireDefault(require("@babel/runtime/helpers/asyncToGenerator"));
+
+var api = _interopRequireWildcard(require("./../infra/api"));
+
+var datetimeHelper = _interopRequireWildcard(require("./../core/datetime_helper"));
+
+function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function _getRequireWildcardCache(nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
+
+function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || _typeof(obj) !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
+
+function getHistories() {
+  return _getHistories.apply(this, arguments);
 }
 
-function _deleteActivity() {
-  _deleteActivity = (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee4(activityId) {
+function _getHistories() {
+  _getHistories = (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee() {
+    var result, response;
+    return _regenerator.default.wrap(function _callee$(_context) {
+      while (1) {
+        switch (_context.prev = _context.next) {
+          case 0:
+            result = null;
+            response = null;
+            _context.prev = 2;
+            _context.next = 5;
+            return api.requestApi("history.get");
+
+          case 5:
+            response = _context.sent;
+            _context.next = 11;
+            break;
+
+          case 8:
+            _context.prev = 8;
+            _context.t0 = _context["catch"](2);
+            response = false;
+
+          case 11:
+            result = api.processResponse(response);
+            return _context.abrupt("return", result);
+
+          case 13:
+          case "end":
+            return _context.stop();
+        }
+      }
+    }, _callee, null, [[2, 8]]);
+  }));
+  return _getHistories.apply(this, arguments);
+}
+
+function addHistory(_x, _x2, _x3) {
+  return _addHistory.apply(this, arguments);
+}
+
+function _addHistory() {
+  _addHistory = (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee2(activityId, inputValue, useTextfield) {
+    var result, response, dateObj, currentDateFormatted, currentHours, currentMinutes, currentSeconds, currentTimeFormatted, body;
+    return _regenerator.default.wrap(function _callee2$(_context2) {
+      while (1) {
+        switch (_context2.prev = _context2.next) {
+          case 0:
+            //prepare variable to store response & result
+            result = null;
+            response = null; //prepare body
+            //- get date 
+
+            dateObj = new Date();
+            currentDateFormatted = datetimeHelper.getDateStandartFormat(); //- get time
+
+            currentHours = dateObj.getHours();
+            if (currentHours.toString().length < 2) currentHours = '0' + currentHours;
+            currentMinutes = dateObj.getMinutes();
+            if (currentMinutes.toString().length < 2) currentMinutes = '0' + currentMinutes;
+            currentSeconds = dateObj.getSeconds();
+            if (currentSeconds.toString().length < 2) currentSeconds = '0' + currentSeconds;
+            currentTimeFormatted = currentHours + ":" + currentMinutes + ":" + currentSeconds; //- fill to body
+
+            body = {
+              "activity_id": activityId,
+              "date": currentDateFormatted,
+              "time": currentTimeFormatted
+            };
+
+            if (useTextfield) {
+              body['value_textfield'] = inputValue;
+            } else {
+              body['value'] = inputValue;
+            } //call to api
+
+
+            _context2.prev = 13;
+            console.log("CHECK BODY FIRST");
+            console.log(body);
+            _context2.next = 18;
+            return api.requestApi("history.add", body);
+
+          case 18:
+            response = _context2.sent;
+            _context2.next = 25;
+            break;
+
+          case 21:
+            _context2.prev = 21;
+            _context2.t0 = _context2["catch"](13);
+            console.log("error !", _context2.t0);
+            response = false;
+
+          case 25:
+            //proccess response
+            result = api.processResponse(response);
+            return _context2.abrupt("return", result);
+
+          case 27:
+          case "end":
+            return _context2.stop();
+        }
+      }
+    }, _callee2, null, [[13, 21]]);
+  }));
+  return _addHistory.apply(this, arguments);
+}
+
+function bulkStoreHistoriesData(_x4, _x5) {
+  return _bulkStoreHistoriesData.apply(this, arguments);
+}
+
+function _bulkStoreHistoriesData() {
+  _bulkStoreHistoriesData = (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee3(inputHistories, activityId) {
+    var result, response, body;
+    return _regenerator.default.wrap(function _callee3$(_context3) {
+      while (1) {
+        switch (_context3.prev = _context3.next) {
+          case 0:
+            //prepare variable to store response & result
+            result = null;
+            response = null; //prepare body
+            //langsung kirim, karena inputhistory sudah jadi array, tinggalbkin body
+            //- fill to body
+
+            body = {
+              "activity_id": activityId,
+              "history": inputHistories
+            }; //call to api
+
+            _context3.prev = 3;
+            console.log("CHECK BODY FIRST");
+            console.log(body);
+            _context3.next = 8;
+            return api.requestApi("history.bulkStore", body);
+
+          case 8:
+            response = _context3.sent;
+            _context3.next = 15;
+            break;
+
+          case 11:
+            _context3.prev = 11;
+            _context3.t0 = _context3["catch"](3);
+            console.log("error !", _context3.t0);
+            response = false;
+
+          case 15:
+            //proccess response
+            result = api.processResponse(response);
+            return _context3.abrupt("return", result);
+
+          case 17:
+          case "end":
+            return _context3.stop();
+        }
+      }
+    }, _callee3, null, [[3, 11]]);
+  }));
+  return _bulkStoreHistoriesData.apply(this, arguments);
+}
+
+function deleteHistory(_x6) {
+  return _deleteHistory.apply(this, arguments);
+}
+
+function _deleteHistory() {
+  _deleteHistory = (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee4(id) {
     var result, response;
     return _regenerator.default.wrap(function _callee4$(_context4) {
       while (1) {
@@ -206,7 +453,9 @@ function _deleteActivity() {
 
             _context4.prev = 2;
             _context4.next = 5;
-            return api.requestApi("activity.delete", null, "/" + activityId);
+            return api.requestApi("history.delete", {
+              "_method": "delete"
+            }, "/" + id);
 
           case 5:
             response = _context4.sent;
@@ -231,10 +480,51 @@ function _deleteActivity() {
       }
     }, _callee4, null, [[2, 8]]);
   }));
-  return _deleteActivity.apply(this, arguments);
+  return _deleteHistory.apply(this, arguments);
 }
 
-},{"./../infra/api":3,"@babel/runtime/helpers/asyncToGenerator":7,"@babel/runtime/helpers/interopRequireDefault":8,"@babel/runtime/helpers/typeof":12,"@babel/runtime/regenerator":15}],3:[function(require,module,exports){
+function getHistoryRange() {
+  return _getHistoryRange.apply(this, arguments);
+}
+
+function _getHistoryRange() {
+  _getHistoryRange = (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee5() {
+    var result, response;
+    return _regenerator.default.wrap(function _callee5$(_context5) {
+      while (1) {
+        switch (_context5.prev = _context5.next) {
+          case 0:
+            result = null;
+            response = null;
+            _context5.prev = 2;
+            _context5.next = 5;
+            return api.requestApi("history.getHistoryRange");
+
+          case 5:
+            response = _context5.sent;
+            _context5.next = 11;
+            break;
+
+          case 8:
+            _context5.prev = 8;
+            _context5.t0 = _context5["catch"](2);
+            response = false;
+
+          case 11:
+            result = api.processResponse(response);
+            return _context5.abrupt("return", result);
+
+          case 13:
+          case "end":
+            return _context5.stop();
+        }
+      }
+    }, _callee5, null, [[2, 8]]);
+  }));
+  return _getHistoryRange.apply(this, arguments);
+}
+
+},{"./../core/datetime_helper":1,"./../infra/api":5,"@babel/runtime/helpers/asyncToGenerator":9,"@babel/runtime/helpers/interopRequireDefault":10,"@babel/runtime/helpers/typeof":14,"@babel/runtime/regenerator":17}],5:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -260,7 +550,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
 var message = {
   "connection": "Check your internet connection !"
 };
-var server = "http://localhost:8000";
+var server = "https://activity-app-database.herokuapp.com";
 var listApi = {
   "activity.get": {
     method: 'GET',
@@ -274,11 +564,6 @@ var listApi = {
   },
   "activity.add": {
     method: "POST",
-    url: server + "/api/activities",
-    withToken: false
-  },
-  "activity.delete": {
-    method: "DELETE",
     url: server + "/api/activities",
     withToken: false
   },
@@ -489,7 +774,7 @@ function _requestApi() {
               url: url + additionalUrl,
               data: dataRequest,
               type: method,
-              crossDomain: false,
+              crossDomain: true,
               dataType: 'json' // added data type
 
             });
@@ -507,7 +792,7 @@ function _requestApi() {
   return _requestApi.apply(this, arguments);
 }
 
-},{"@babel/runtime/helpers/asyncToGenerator":7,"@babel/runtime/helpers/interopRequireDefault":8,"@babel/runtime/helpers/slicedToArray":11,"@babel/runtime/regenerator":15}],4:[function(require,module,exports){
+},{"@babel/runtime/helpers/asyncToGenerator":9,"@babel/runtime/helpers/interopRequireDefault":10,"@babel/runtime/helpers/slicedToArray":13,"@babel/runtime/regenerator":17}],6:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -518,27 +803,29 @@ var _regenerator = _interopRequireDefault(require("@babel/runtime/regenerator"))
 
 var _asyncToGenerator2 = _interopRequireDefault(require("@babel/runtime/helpers/asyncToGenerator"));
 
+var historyRepository = _interopRequireWildcard(require("./../../../js/app/data/history_repository"));
+
 var activityRepository = _interopRequireWildcard(require("./../../../js/app/data/activity_repository"));
 
-var alertHelper = _interopRequireWildcard(require("./../core/alert_helper"));
+var templateHelper = _interopRequireWildcard(require("./../core/template_helper"));
 
 function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function _getRequireWildcardCache(nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
 
 function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || _typeof(obj) !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
 
-function addActivity(_x, _x2, _x3, _x4, _x5) {
-  return _addActivity.apply(this, arguments);
+function loadActivitiesData() {
+  return _loadActivitiesData.apply(this, arguments);
 }
 
-function _addActivity() {
-  _addActivity = (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee3(title, value, target, canChange, useTextfield) {
+function _loadActivitiesData() {
+  _loadActivitiesData = (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee3() {
     var result;
     return _regenerator.default.wrap(function _callee3$(_context3) {
       while (1) {
         switch (_context3.prev = _context3.next) {
           case 0:
             _context3.next = 2;
-            return activityRepository.addActivity(title, value, target, canChange, useTextfield);
+            return activityRepository.getActivities();
 
           case 2:
             result = _context3.sent;
@@ -551,79 +838,133 @@ function _addActivity() {
       }
     }, _callee3);
   }));
-  return _addActivity.apply(this, arguments);
+  return _loadActivitiesData.apply(this, arguments);
+}
+
+function showActivitiesData(activities) {
+  console.log("check data");
+  console.log(activities); //clear histories
+
+  $("#importer").empty(); //prepare template
+
+  var optionActivityTpl = $('script[data-template="option-activity"').text(); //render template
+
+  $("#importer").append(activities.map(function (activity, i) {
+    return templateHelper.render(optionActivityTpl, {
+      "title": activity['title'],
+      'id': activity['id'],
+      'useTextfield': activity['use_textfield']
+    });
+  }));
+}
+
+function bulkStoreHistoriesData(_x, _x2) {
+  return _bulkStoreHistoriesData.apply(this, arguments);
+}
+
+function _bulkStoreHistoriesData() {
+  _bulkStoreHistoriesData = (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee4(inputHistories, activityId) {
+    var result;
+    return _regenerator.default.wrap(function _callee4$(_context4) {
+      while (1) {
+        switch (_context4.prev = _context4.next) {
+          case 0:
+            _context4.next = 2;
+            return historyRepository.bulkStoreHistoriesData(inputHistories, activityId);
+
+          case 2:
+            result = _context4.sent;
+            return _context4.abrupt("return", result);
+
+          case 4:
+          case "end":
+            return _context4.stop();
+        }
+      }
+    }, _callee4);
+  }));
+  return _bulkStoreHistoriesData.apply(this, arguments);
 }
 
 jQuery( /*#__PURE__*/(0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee2() {
+  var activitiesData;
   return _regenerator.default.wrap(function _callee2$(_context2) {
     while (1) {
       switch (_context2.prev = _context2.next) {
         case 0:
-          //event handler
+          _context2.next = 2;
+          return loadActivitiesData();
+
+        case 2:
+          activitiesData = _context2.sent;
+
+          if (activitiesData['success']) {
+            showActivitiesData(activitiesData['response']['data']);
+          } //event handler
+
+
           $("body").on('click', '#submit-btn', /*#__PURE__*/(0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee() {
-            var title, value, target, canChange, useTextfield, result;
+            var activityId, useTextfield, plainInput, inputHistories, result;
             return _regenerator.default.wrap(function _callee$(_context) {
               while (1) {
                 switch (_context.prev = _context.next) {
                   case 0:
-                    //get title, value, target, canchange
-                    title = $("#title").val();
-                    value = $("#value").val();
-                    target = $("#target").val();
-                    canChange = 0;
-                    useTextfield = 0; //validate if user use textfield, then it SHOULD EDITABLE
-                    //if user use textfield, but not use editable, it will return error
+                    //get activityId
+                    activityId = $("#importer").find(":selected").val();
+                    useTextfield = $("#importer").find(":selected").attr("useTextfield"); //get input history
 
-                    if (!($("#is_use_textfield:checked").length > 0 && $("#is_editable:checked").length == 0)) {
-                      _context.next = 8;
-                      break;
-                    }
+                    plainInput = $("textarea[name='histories']").val();
+                    inputHistories = [];
+                    _context.prev = 4;
+                    console.log("check palinInput");
+                    console.log(plainInput);
+                    inputHistories = plainInput.split("\n").map(function (row) {
+                      var rowSplitted = row.split(", ");
 
-                    alert("If you want to use textfield, then you should check 'is editable' !");
+                      if (useTextfield == "1") {
+                        return {
+                          "date": rowSplitted[0],
+                          "time": rowSplitted[1],
+                          "value_textfield": rowSplitted[2]
+                        };
+                      } else {
+                        return {
+                          "date": rowSplitted[0],
+                          "time": rowSplitted[1],
+                          "value": rowSplitted[2]
+                        };
+                      }
+                    });
+                    _context.next = 15;
+                    break;
+
+                  case 10:
+                    _context.prev = 10;
+                    _context.t0 = _context["catch"](4);
+                    console.log(_context.t0);
+                    alert("your input format is wrong");
                     return _context.abrupt("return");
 
-                  case 8:
-                    if ($("#is_editable:checked").length > 0) {
-                      canChange = 1;
-                    }
+                  case 15:
+                    _context.next = 17;
+                    return bulkStoreHistoriesData(inputHistories, activityId);
 
-                    if ($("#is_use_textfield:checked").length > 0) {
-                      useTextfield = 1;
-                    }
-
-                    if (title == "" || title == null || value == "" || value == null || target == "" || target == null || target <= 0) {
-                      alert("Failed to add activity, please fill all the fields !");
-                    }
-
-                    _context.next = 13;
-                    return addActivity(title, value, target, canChange, useTextfield);
-
-                  case 13:
+                  case 17:
                     result = _context.sent;
 
                     if (result['success']) {
-                      alertHelper.showSnackBar("Successfully added !", 1);
+                      alert("successfully added !");
                     }
 
-                  case 15:
+                  case 19:
                   case "end":
                     return _context.stop();
                 }
               }
-            }, _callee);
+            }, _callee, null, [[4, 10]]);
           })));
-          $("body").on('change', '#is_use_textfield', function () {
-            if (this.checked) {
-              $("#value").val(0);
-              $("#value").prop("disabled", true);
-              $("#is_editable").prop("checked", true);
-            } else {
-              $("#value").val(0);
-              $("#value").prop("disabled", false);
-            }
-          });
 
-        case 2:
+        case 5:
         case "end":
           return _context2.stop();
       }
@@ -631,7 +972,7 @@ jQuery( /*#__PURE__*/(0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.
   }, _callee2);
 })));
 
-},{"./../../../js/app/data/activity_repository":2,"./../core/alert_helper":1,"@babel/runtime/helpers/asyncToGenerator":7,"@babel/runtime/helpers/interopRequireDefault":8,"@babel/runtime/helpers/typeof":12,"@babel/runtime/regenerator":15}],5:[function(require,module,exports){
+},{"./../../../js/app/data/activity_repository":3,"./../../../js/app/data/history_repository":4,"./../core/template_helper":2,"@babel/runtime/helpers/asyncToGenerator":9,"@babel/runtime/helpers/interopRequireDefault":10,"@babel/runtime/helpers/typeof":14,"@babel/runtime/regenerator":17}],7:[function(require,module,exports){
 function _arrayLikeToArray(arr, len) {
   if (len == null || len > arr.length) len = arr.length;
 
@@ -644,14 +985,14 @@ function _arrayLikeToArray(arr, len) {
 
 module.exports = _arrayLikeToArray;
 module.exports["default"] = module.exports, module.exports.__esModule = true;
-},{}],6:[function(require,module,exports){
+},{}],8:[function(require,module,exports){
 function _arrayWithHoles(arr) {
   if (Array.isArray(arr)) return arr;
 }
 
 module.exports = _arrayWithHoles;
 module.exports["default"] = module.exports, module.exports.__esModule = true;
-},{}],7:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) {
   try {
     var info = gen[key](arg);
@@ -690,7 +1031,7 @@ function _asyncToGenerator(fn) {
 
 module.exports = _asyncToGenerator;
 module.exports["default"] = module.exports, module.exports.__esModule = true;
-},{}],8:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 function _interopRequireDefault(obj) {
   return obj && obj.__esModule ? obj : {
     "default": obj
@@ -699,7 +1040,7 @@ function _interopRequireDefault(obj) {
 
 module.exports = _interopRequireDefault;
 module.exports["default"] = module.exports, module.exports.__esModule = true;
-},{}],9:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 function _iterableToArrayLimit(arr, i) {
   var _i = arr && (typeof Symbol !== "undefined" && arr[Symbol.iterator] || arr["@@iterator"]);
 
@@ -732,14 +1073,14 @@ function _iterableToArrayLimit(arr, i) {
 
 module.exports = _iterableToArrayLimit;
 module.exports["default"] = module.exports, module.exports.__esModule = true;
-},{}],10:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 function _nonIterableRest() {
   throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
 }
 
 module.exports = _nonIterableRest;
 module.exports["default"] = module.exports, module.exports.__esModule = true;
-},{}],11:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 var arrayWithHoles = require("./arrayWithHoles.js");
 
 var iterableToArrayLimit = require("./iterableToArrayLimit.js");
@@ -754,7 +1095,7 @@ function _slicedToArray(arr, i) {
 
 module.exports = _slicedToArray;
 module.exports["default"] = module.exports, module.exports.__esModule = true;
-},{"./arrayWithHoles.js":6,"./iterableToArrayLimit.js":9,"./nonIterableRest.js":10,"./unsupportedIterableToArray.js":13}],12:[function(require,module,exports){
+},{"./arrayWithHoles.js":8,"./iterableToArrayLimit.js":11,"./nonIterableRest.js":12,"./unsupportedIterableToArray.js":15}],14:[function(require,module,exports){
 function _typeof(obj) {
   "@babel/helpers - typeof";
 
@@ -777,7 +1118,7 @@ function _typeof(obj) {
 
 module.exports = _typeof;
 module.exports["default"] = module.exports, module.exports.__esModule = true;
-},{}],13:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
 var arrayLikeToArray = require("./arrayLikeToArray.js");
 
 function _unsupportedIterableToArray(o, minLen) {
@@ -791,7 +1132,7 @@ function _unsupportedIterableToArray(o, minLen) {
 
 module.exports = _unsupportedIterableToArray;
 module.exports["default"] = module.exports, module.exports.__esModule = true;
-},{"./arrayLikeToArray.js":5}],14:[function(require,module,exports){
+},{"./arrayLikeToArray.js":7}],16:[function(require,module,exports){
 /**
  * Copyright (c) 2014-present, Facebook, Inc.
  *
@@ -1541,9 +1882,9 @@ try {
   Function("r", "regeneratorRuntime = r")(runtime);
 }
 
-},{}],15:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 module.exports = require("regenerator-runtime");
 
-},{"regenerator-runtime":14}]},{},[4]);
+},{"regenerator-runtime":16}]},{},[6]);
 
-//# sourceMappingURL=form.js.map
+//# sourceMappingURL=import copy.js.map

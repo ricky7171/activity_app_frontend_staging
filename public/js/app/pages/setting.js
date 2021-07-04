@@ -4,15 +4,23 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.showSnackBar = showSnackBar;
+exports.render = render;
 
-function showSnackBar(text) {
-  var duration = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 3;
-  var snackbarEl = $($.parseHTML('<div class="show" id="snackbar">' + text + '</div>'));
-  $("body").append(snackbarEl);
-  setTimeout(function () {
-    snackbarEl.removeClass("show");
-  }, 3000);
+function render(html, item) {
+  var tokens = html.split(/\$\{(.+?)\}/g); //example tokens : 
+  //["<div>", "title", "</div><div>", "description", "</div>"]
+
+  var finalHtml = tokens.map(function (token, i) {
+    //token can be "<div>" (when i is odd) or "title" (when i is even)
+    if (i % 2 == 0) {
+      //if even, that means token is just a html
+      return token;
+    } else {
+      //if odd, that means token is a key of item. 
+      return item[token];
+    }
+  }).join('');
+  return finalHtml;
 }
 
 },{}],2:[function(require,module,exports){
@@ -518,120 +526,182 @@ var _regenerator = _interopRequireDefault(require("@babel/runtime/regenerator"))
 
 var _asyncToGenerator2 = _interopRequireDefault(require("@babel/runtime/helpers/asyncToGenerator"));
 
-var activityRepository = _interopRequireWildcard(require("./../../../js/app/data/activity_repository"));
+var activityRepository = _interopRequireWildcard(require("../data/activity_repository"));
 
-var alertHelper = _interopRequireWildcard(require("./../core/alert_helper"));
+var templateHelper = _interopRequireWildcard(require("../core/template_helper"));
 
 function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function _getRequireWildcardCache(nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
 
 function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || _typeof(obj) !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
 
-function addActivity(_x, _x2, _x3, _x4, _x5) {
-  return _addActivity.apply(this, arguments);
-}
+jQuery( /*#__PURE__*/(0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee5() {
+  var activitiesData, loadData, _loadData, loadActivitiesData, _loadActivitiesData, showActivitiesData, deleteActivityData, _deleteActivityData;
 
-function _addActivity() {
-  _addActivity = (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee3(title, value, target, canChange, useTextfield) {
-    var result;
-    return _regenerator.default.wrap(function _callee3$(_context3) {
-      while (1) {
-        switch (_context3.prev = _context3.next) {
-          case 0:
-            _context3.next = 2;
-            return activityRepository.addActivity(title, value, target, canChange, useTextfield);
-
-          case 2:
-            result = _context3.sent;
-            return _context3.abrupt("return", result);
-
-          case 4:
-          case "end":
-            return _context3.stop();
-        }
-      }
-    }, _callee3);
-  }));
-  return _addActivity.apply(this, arguments);
-}
-
-jQuery( /*#__PURE__*/(0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee2() {
-  return _regenerator.default.wrap(function _callee2$(_context2) {
+  return _regenerator.default.wrap(function _callee5$(_context5) {
     while (1) {
-      switch (_context2.prev = _context2.next) {
+      switch (_context5.prev = _context5.next) {
         case 0:
-          //event handler
-          $("body").on('click', '#submit-btn', /*#__PURE__*/(0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee() {
-            var title, value, target, canChange, useTextfield, result;
+          _deleteActivityData = function _deleteActivityData3() {
+            _deleteActivityData = (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee4(activityId) {
+              var result;
+              return _regenerator.default.wrap(function _callee4$(_context4) {
+                while (1) {
+                  switch (_context4.prev = _context4.next) {
+                    case 0:
+                      _context4.next = 2;
+                      return activityRepository.deleteActivity(activityId);
+
+                    case 2:
+                      result = _context4.sent;
+                      return _context4.abrupt("return", result);
+
+                    case 4:
+                    case "end":
+                      return _context4.stop();
+                  }
+                }
+              }, _callee4);
+            }));
+            return _deleteActivityData.apply(this, arguments);
+          };
+
+          deleteActivityData = function _deleteActivityData2(_x) {
+            return _deleteActivityData.apply(this, arguments);
+          };
+
+          showActivitiesData = function _showActivitiesData(activities) {
+            //clear histories
+            $("#activity-list").empty(); //prepare template
+
+            var optionActivityTpl = $('script[data-template="option-activity"').text(); //render template
+
+            $("#activity-list").empty().append(activities.map(function (activity, i) {
+              return templateHelper.render(optionActivityTpl, {
+                "title": activity['title'],
+                'id': activity['id'],
+                'useTextfield': activity['use_textfield']
+              });
+            }));
+          };
+
+          _loadActivitiesData = function _loadActivitiesData3() {
+            _loadActivitiesData = (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee3() {
+              var result;
+              return _regenerator.default.wrap(function _callee3$(_context3) {
+                while (1) {
+                  switch (_context3.prev = _context3.next) {
+                    case 0:
+                      _context3.next = 2;
+                      return activityRepository.getActivities();
+
+                    case 2:
+                      result = _context3.sent;
+                      return _context3.abrupt("return", result);
+
+                    case 4:
+                    case "end":
+                      return _context3.stop();
+                  }
+                }
+              }, _callee3);
+            }));
+            return _loadActivitiesData.apply(this, arguments);
+          };
+
+          loadActivitiesData = function _loadActivitiesData2() {
+            return _loadActivitiesData.apply(this, arguments);
+          };
+
+          _loadData = function _loadData3() {
+            _loadData = (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee2() {
+              return _regenerator.default.wrap(function _callee2$(_context2) {
+                while (1) {
+                  switch (_context2.prev = _context2.next) {
+                    case 0:
+                      _context2.next = 2;
+                      return loadActivitiesData();
+
+                    case 2:
+                      activitiesData = _context2.sent;
+
+                      if (activitiesData['success']) {
+                        showActivitiesData(activitiesData['response']['data']);
+                      }
+
+                    case 4:
+                    case "end":
+                      return _context2.stop();
+                  }
+                }
+              }, _callee2);
+            }));
+            return _loadData.apply(this, arguments);
+          };
+
+          loadData = function _loadData2() {
+            return _loadData.apply(this, arguments);
+          };
+
+          // - declare state
+          activitiesData = []; // - startup
+
+          _context5.next = 10;
+          return loadData();
+
+        case 10:
+          // - event handler
+          $("body").on('click', '#delete-btn', /*#__PURE__*/(0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee() {
+            var activityId, result;
             return _regenerator.default.wrap(function _callee$(_context) {
               while (1) {
                 switch (_context.prev = _context.next) {
                   case 0:
-                    //get title, value, target, canchange
-                    title = $("#title").val();
-                    value = $("#value").val();
-                    target = $("#target").val();
-                    canChange = 0;
-                    useTextfield = 0; //validate if user use textfield, then it SHOULD EDITABLE
-                    //if user use textfield, but not use editable, it will return error
+                    //get activityId
+                    activityId = $("#activity-list").find(":selected").val();
 
-                    if (!($("#is_use_textfield:checked").length > 0 && $("#is_editable:checked").length == 0)) {
-                      _context.next = 8;
+                    if (activityId) {
+                      _context.next = 4;
                       break;
                     }
 
-                    alert("If you want to use textfield, then you should check 'is editable' !");
+                    alert("Please select your activity that you want to delete");
                     return _context.abrupt("return");
 
-                  case 8:
-                    if ($("#is_editable:checked").length > 0) {
-                      canChange = 1;
-                    }
+                  case 4:
+                    _context.next = 6;
+                    return deleteActivityData(activityId);
 
-                    if ($("#is_use_textfield:checked").length > 0) {
-                      useTextfield = 1;
-                    }
-
-                    if (title == "" || title == null || value == "" || value == null || target == "" || target == null || target <= 0) {
-                      alert("Failed to add activity, please fill all the fields !");
-                    }
-
-                    _context.next = 13;
-                    return addActivity(title, value, target, canChange, useTextfield);
-
-                  case 13:
+                  case 6:
                     result = _context.sent;
 
-                    if (result['success']) {
-                      alertHelper.showSnackBar("Successfully added !", 1);
+                    if (!result['success']) {
+                      _context.next = 11;
+                      break;
                     }
 
-                  case 15:
+                    _context.next = 10;
+                    return loadData();
+
+                  case 10:
+                    alert("successfully deleted !");
+
+                  case 11:
                   case "end":
                     return _context.stop();
                 }
               }
             }, _callee);
           })));
-          $("body").on('change', '#is_use_textfield', function () {
-            if (this.checked) {
-              $("#value").val(0);
-              $("#value").prop("disabled", true);
-              $("#is_editable").prop("checked", true);
-            } else {
-              $("#value").val(0);
-              $("#value").prop("disabled", false);
-            }
-          });
 
-        case 2:
+        case 11:
         case "end":
-          return _context2.stop();
+          return _context5.stop();
       }
     }
-  }, _callee2);
+  }, _callee5);
 })));
 
-},{"./../../../js/app/data/activity_repository":2,"./../core/alert_helper":1,"@babel/runtime/helpers/asyncToGenerator":7,"@babel/runtime/helpers/interopRequireDefault":8,"@babel/runtime/helpers/typeof":12,"@babel/runtime/regenerator":15}],5:[function(require,module,exports){
+},{"../core/template_helper":1,"../data/activity_repository":2,"@babel/runtime/helpers/asyncToGenerator":7,"@babel/runtime/helpers/interopRequireDefault":8,"@babel/runtime/helpers/typeof":12,"@babel/runtime/regenerator":15}],5:[function(require,module,exports){
 function _arrayLikeToArray(arr, len) {
   if (len == null || len > arr.length) len = arr.length;
 
@@ -1546,4 +1616,4 @@ module.exports = require("regenerator-runtime");
 
 },{"regenerator-runtime":14}]},{},[4]);
 
-//# sourceMappingURL=form.js.map
+//# sourceMappingURL=setting.js.map

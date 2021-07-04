@@ -7,6 +7,7 @@ Object.defineProperty(exports, "__esModule", {
 exports.getDateStandartFormat = getDateStandartFormat;
 exports.getTimeStandartFormat = getTimeStandartFormat;
 exports.monthToText = monthToText;
+exports.getCurrentMonth = getCurrentMonth;
 
 function getDateStandartFormat() {
   var dateObj = new Date();
@@ -34,6 +35,12 @@ function getTimeStandartFormat() {
 
 function monthToText(month) {
   return ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'][month - 1];
+}
+
+function getCurrentMonth() {
+  var dateObject = new Date();
+  var currentMonth = dateObject.getMonth();
+  return monthToText(currentMonth);
 }
 
 },{}],2:[function(require,module,exports){
@@ -370,7 +377,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
 var message = {
   "connection": "Check your internet connection !"
 };
-var server = "https://activity-app-database.herokuapp.com";
+var server = "http://localhost:8000";
 var listApi = {
   "activity.get": {
     method: 'GET',
@@ -384,6 +391,11 @@ var listApi = {
   },
   "activity.add": {
     method: "POST",
+    url: server + "/api/activities",
+    withToken: false
+  },
+  "activity.delete": {
+    method: "DELETE",
     url: server + "/api/activities",
     withToken: false
   },
@@ -594,7 +606,7 @@ function _requestApi() {
               url: url + additionalUrl,
               data: dataRequest,
               type: method,
-              crossDomain: true,
+              crossDomain: false,
               dataType: 'json' // added data type
 
             });
