@@ -352,7 +352,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
 var message = {
   "connection": "Check your internet connection !"
 };
-var server = "http://localhost:8000";
+var server = "https://activity-app-database.herokuapp.com";
 var listApi = {
   "activity.get": {
     method: 'GET',
@@ -581,7 +581,7 @@ function _requestApi() {
               url: url + additionalUrl,
               data: dataRequest,
               type: method,
-              crossDomain: false,
+              crossDomain: true,
               dataType: 'json' // added data type
 
             });
